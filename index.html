@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ankush Raj - Portfolio</title>
+    <title>Ankush Raj</title>
+    <link rel="icon" href="./ankush.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lenis/1.0.42/lenis.min.js"></script>
     <style>
@@ -176,9 +177,15 @@
       }
 
       .tool-icon {
-        width: 48px;
-        height: 48px;
+        min-width: 72px;
+        height: auto;
+        padding: 10px 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         transition: all 0.3s ease;
+        box-sizing: border-box;
+        white-space: nowrap;
       }
 
       body.dark-mode .tool-icon {
@@ -228,6 +235,18 @@
       @media (max-width: 768px) {
         .hero-title {
           font-size: 2.5rem;
+        }
+      }
+
+      /* Make tool badges more compact on very small screens */
+      @media (max-width: 420px) {
+        .tool-icon {
+          min-width: 56px;
+          padding: 8px 10px;
+        }
+
+        .tool-icon > span {
+          font-size: 1rem;
         }
       }
 

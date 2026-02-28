@@ -1,1283 +1,758 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ankush Raj</title>
-    <link rel="icon" href="./ankush.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lenis/1.0.42/lenis.min.js"></script>
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ankush Raj — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #212121; --bg-secondary: #2a2a2a;
+      --surface: #2f2f2f; --surface-hover: #3a3a3a;
+      --border: rgba(255,255,255,0.09);
+      --text-primary: #ececec; --text-secondary: #a0a0a0; --text-muted: #5e5e5e;
+      --accent: #cc785c; --accent-soft: rgba(204,120,92,0.15);
+      --user-bubble: #333; --input-bg: #2f2f2f;
+    }
+    [data-theme="light"] {
+      --bg: #f5f4ef; --bg-secondary: #ede8df;
+      --surface: #ffffff; --surface-hover: #f0ede8;
+      --border: rgba(0,0,0,0.08);
+      --text-primary: #1a1a1a; --text-secondary: #5a5a5a; --text-muted: #aaa;
+      --accent: #b5572c; --accent-soft: rgba(181,87,44,0.1);
+      --user-bubble: #e5e0d8; --input-bg: #ffffff;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.65;
+      height: 100vh; overflow: hidden; display: flex;
+      transition: background 0.3s, color 0.3s;
+    }
 
-      * {
-        font-family: "Inter", sans-serif;
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: 260px;
+      height: 100vh; background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; flex-shrink: 0;
+      position: relative; overflow: hidden; z-index: 50;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    /* desktop sidebar header — no logo, just a thin top padding area */
+    .sidebar-header {
+      padding: 18px 14px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .sidebar-nav { flex: 1; padding: 8px 8px 0; overflow-y: auto; overflow-x: hidden; }
+    .sidebar-nav::-webkit-scrollbar { width: 3px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); }
+    .sidebar-nav-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 6px 10px; margin-top: 8px; white-space: nowrap;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+      border-radius: 8px; cursor: pointer; color: var(--text-secondary);
+      font-size: 13.5px; user-select: none; white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-item:hover { background: var(--surface-hover); color: var(--text-primary); }
+    .nav-item .icon { width: 17px; height: 17px; opacity: 0.65; flex-shrink: 0; }
+
+    .ad-card {
+      margin: 12px 10px;
+      background: linear-gradient(135deg, rgba(204,120,92,0.16), rgba(204,120,92,0.03));
+      border: 1px solid rgba(204,120,92,0.25); border-radius: 12px;
+      padding: 14px; cursor: pointer; display: block; text-decoration: none;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .ad-card:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(204,120,92,0.14); }
+    .ad-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .ad-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+    .ad-desc { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; }
+    .ad-cta { font-size: 11px; color: var(--accent); font-weight: 600; margin-top: 8px; }
+
+    .sidebar-footer { padding: 10px 8px 14px; border-top: 1px solid var(--border); flex-shrink: 0; }
+    .theme-toggle {
+      display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+      border-radius: 8px; cursor: pointer; color: var(--text-secondary);
+      font-size: 13px; white-space: nowrap; transition: background 0.15s, color 0.15s;
+    }
+    .theme-toggle:hover { background: var(--surface-hover); color: var(--text-primary); }
+
+    /* ─── MAIN ─── */
+    .main { flex: 1; height: 100vh; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+    /* Mobile header */
+    .mobile-header {
+      display: none; align-items: center; gap: 12px;
+      padding: 10px 16px; border-bottom: 1px solid var(--border);
+      background: var(--bg); flex-shrink: 0;
+    }
+    .hamburger {
+      width: 36px; height: 36px; border-radius: 9px;
+      background: var(--surface); border: 1px solid var(--border);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-primary); flex-shrink: 0;
+    }
+    /* Mobile logo sits beside hamburger — no overlap */
+    .mobile-logo {
+      font-family: 'Newsreader', serif; font-size: 26px;
+      font-weight: 400; font-style: italic; user-select: none; cursor: pointer;
+      line-height: 1;
+    }
+    .ml-a { color: var(--accent); }
+    .ml-rest { color: var(--text-primary); }
+    .ml-dot { color: var(--accent); }
+
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 80;
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* ─── CHAT AREA ─── */
+    .chat-area { flex: 1; overflow-y: auto; padding: 32px 0; scroll-behavior: smooth; }
+    .chat-area::-webkit-scrollbar { width: 5px; }
+    .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .chat-area::-webkit-scrollbar-track { background: transparent; }
+
+    .messages-container {
+      max-width: 740px; margin: 0 auto; padding: 0 24px;
+      display: flex; flex-direction: column;
+    }
+
+    /* ─── WELCOME ─── */
+    .welcome-screen {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 100%; text-align: center;
+      padding: 40px 24px; animation: fadeUp 0.5s ease;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+    .welcome-avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #e8a07a);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 22px; box-shadow: 0 8px 32px rgba(204,120,92,0.3);
+    }
+    .welcome-avatar svg { width: 38px; height: 38px; fill: white; display: block; }
+
+    .welcome-title {
+      font-family: 'Newsreader', serif; font-size: 30px; font-weight: 300; font-style: italic;
+      color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.3px;
+    }
+    .welcome-sub { font-size: 15px; color: var(--text-secondary); font-weight: 300; margin-bottom: 38px; max-width: 380px; }
+    .quick-prompts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 520px; width: 100%; }
+    .quick-prompt {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 16px; cursor: pointer; text-align: left;
+      color: var(--text-secondary); font-size: 13px; line-height: 1.5;
+      transition: all 0.2s;
+    }
+    .quick-prompt:hover { background: var(--surface-hover); border-color: var(--accent); color: var(--text-primary); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    .quick-prompt .prompt-icon { font-size: 18px; margin-bottom: 6px; display: block; }
+    .quick-prompt strong { display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; font-size: 13.5px; }
+
+    /* ─── MESSAGES ─── */
+    .message {
+      padding: 20px 0; display: flex; gap: 14px;
+      opacity: 0; transform: translateY(8px);
+      animation: msgIn 0.3s ease forwards;
+    }
+    @keyframes msgIn { to { opacity:1; transform:translateY(0); } }
+    .message.user-message { flex-direction: row-reverse; }
+
+    /* Avatar */
+    .msg-avatar {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 2px; position: relative;
+    }
+    /* ring animation after each assistant message */
+    .msg-avatar::after {
+      content: ''; position: absolute; inset: -3px; border-radius: 50%;
+      border: 2.5px solid transparent; pointer-events: none;
+    }
+    .msg-avatar.ring-anim::after {
+      border-top-color: var(--accent); border-right-color: var(--accent);
+      animation: ringOnce 0.75s cubic-bezier(0.4,0,0.2,1) forwards;
+    }
+    @keyframes ringOnce {
+      0%   { transform:rotate(0deg); opacity:1; }
+      75%  { transform:rotate(360deg); opacity:1; }
+      100% { transform:rotate(360deg); opacity:0; }
+    }
+
+    /* User avatar — gradient bg + person icon */
+    .msg-avatar.user { background: linear-gradient(135deg, var(--accent), #e8a07a); }
+    .msg-avatar.user svg { width: 18px; height: 18px; fill: white; display: block; }
+
+    /* Assistant avatar — neutral bg + styled "A" */
+    .msg-avatar.assistant {
+      background: linear-gradient(135deg, #4a4a4a, #333); color: white;
+      font-family: 'Newsreader', serif; font-style: italic; font-size: 17px;
+      /* flex centering already handles vertical alignment */
+    }
+    [data-theme="light"] .msg-avatar.assistant { background: linear-gradient(135deg, #c8c4be, #b5b0aa); }
+
+    .msg-content { flex: 1; max-width: calc(100% - 48px); }
+    .user-message .msg-content {
+      background: var(--user-bubble); border-radius: 18px 4px 18px 18px;
+      padding: 12px 16px; max-width: 75%; margin-left: auto;
+    }
+    .msg-sender { font-size: 11.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .msg-body { color: var(--text-primary); font-size: 15px; line-height: 1.7; }
+
+    /* ─── SERIAL REVEAL — each child slides up + fades in with staggered delay ─── */
+    .msg-body > * {
+      opacity: 0; transform: translateY(9px);
+      animation: revealEl 1.5s ease forwards;
+    }
+    @keyframes revealEl { to { opacity:1; transform:translateY(0); } }
+
+    /* Cards additionally scale in */
+    .msg-body > .project-cards,
+    .msg-body > .info-card,
+    .msg-body > .skill-grid,
+    .msg-body > .contact-grid {
+      opacity: 0; transform: translateY(12px) scale(0.983);
+      animation: revealCard 0.5s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes revealCard { to { opacity:1; transform:translateY(0) scale(1); } }
+
+    .msg-body h3 { font-family: 'Newsreader', serif; font-size: 20px; font-weight: 400; font-style: italic; color: var(--text-primary); margin: 14px 0 8px; }
+    .msg-body h3:first-child { margin-top: 0; }
+    .msg-body p { margin-bottom: 12px; }
+    .msg-body p:last-child { margin-bottom: 0; }
+    .msg-body strong { font-weight: 600; color: var(--text-primary); }
+    .msg-body ul { list-style: none; padding: 0; margin: 8px 0; }
+    .msg-body ul li { padding: 5px 0 5px 20px; position: relative; color: var(--text-secondary); font-size: 14.5px; }
+    .msg-body ul li::before { content: '·'; position: absolute; left: 7px; color: var(--accent); font-size: 22px; line-height: 1.1; }
+
+    /* ─── CARDS ─── */
+    .project-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin: 4px 0; }
+    .project-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 15px; cursor: pointer; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .project-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+    .project-tag { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .project-name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 5px; }
+    .project-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+
+    .skill-grid { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0; }
+    .skill-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 13px; color: var(--text-secondary); transition: all 0.2s;
+    }
+    .skill-chip:hover { border-color: var(--accent); color: var(--text-primary); background: var(--accent-soft); }
+    .skill-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+    .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin: 4px 0; }
+    .info-row { display: flex; gap: 12px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-row:first-child { padding-top: 0; }
+    .info-label { min-width: 110px; color: var(--text-muted); font-size: 11.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1px; }
+    .info-val { color: var(--text-primary); }
+
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 4px 0; }
+    .contact-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s;
+      text-decoration: none; display: block; color: inherit;
+    }
+    .contact-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .contact-item .c-icon { font-size: 22px; margin-bottom: 8px; }
+    .contact-item .c-label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .contact-item .c-val { font-size: 12.5px; color: var(--text-primary); word-break: break-all; }
+
+    /* Typing */
+    .typing-row { display: flex; align-items: center; gap: 12px; padding: 20px 0; opacity: 0; animation: msgIn 0.2s ease forwards; }
+    .ring-loader { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid var(--border); border-top-color: var(--accent); border-right-color: var(--accent); animation: spin 0.7s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .typing-text { font-size: 13px; color: var(--text-muted); font-style: italic; }
+
+    .msg-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ─── INPUT ─── */
+    .input-area { padding: 12px 24px 18px; background: var(--bg); border-top: 1px solid var(--border); transition: background 0.3s; }
+    .input-wrapper { max-width: 740px; margin: 0 auto; }
+    .tag-row { display: flex; gap: 7px; margin-bottom: 10px; flex-wrap: wrap; }
+    .tag-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 5px 13px; font-size: 12.5px;
+      color: var(--text-secondary); cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-weight: 400; white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tag-btn:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+    /* Input box — single-line feel, items centred vertically */
+    .input-box {
+      display: flex;
+      align-items: center;       /* vertically centre textarea + button */
+      background: var(--input-bg); border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0 10px 0 16px;    /* no top/bottom padding — let flex handle it */
+      gap: 10px; min-height: 50px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-box:focus-within { border-color: rgba(204,120,92,0.4); box-shadow: 0 0 0 3px rgba(204,120,92,0.08); }
+
+    .chat-input {
+      flex: 1; background: transparent; border: none; outline: none; resize: none;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text-primary);
+      line-height: 1.5; max-height: 140px; overflow-y: auto;
+      /* padding: 0 eliminates any default offset; vertical centering done by parent flex */
+      padding: 0; margin: 0;
+      /* keep the single row perfectly centred — override default textarea baseline quirk */
+      vertical-align: middle;
+    }
+    .chat-input::placeholder { color: var(--text-muted); }
+
+    .send-btn {
+      width: 34px; height: 34px; border-radius: 9px; background: var(--accent);
+      border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .send-btn:hover { background: #b5623a; transform: scale(1.05); }
+    .send-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+    .send-btn svg { width: 15px; height: 15px; fill: white; display: block; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      /* sidebar hidden off-screen, slides in when open */
+      .sidebar {
+        position: fixed; top: 0; left: 0; height: 100vh;
+        transform: translateX(-100%); z-index: 90;
+        width: 260px !important;
+        transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), background 0.3s;
+        box-shadow: none;
       }
-
-      /* Dark Mode Styles */
-      body.dark-mode {
-        background: linear-gradient(
-          135deg,
-          #0a0118 0%,
-          #1a0b2e 50%,
-          #2d1b4e 100%
-        );
-        color: white;
-      }
-
-      body.dark-mode .nav-bg {
-        background: rgba(10, 1, 24, 0.8);
-        border-color: rgba(255, 255, 255, 0.1);
-      }
-
-      body.dark-mode .card {
-        background: rgba(255, 255, 255, 0.03);
-        border-color: rgba(255, 255, 255, 0.1);
-      }
-
-      body.dark-mode .text-dark {
-        color: white !important;
-      }
-
-      /* Light Mode Styles */
-      body.light-mode {
-        background: linear-gradient(
-          135deg,
-          #fef5ff 0%,
-          #fff0f9 50%,
-          #ffe8f5 100%
-        );
-        color: #1a0b2e;
-      }
-
-      body.light-mode .nav-bg {
-        background: rgba(255, 255, 255, 0.9);
-        border-color: rgba(0, 0, 0, 0.1);
-      }
-
-      body.light-mode .card {
-        background: rgba(255, 255, 255, 0.6);
-        border-color: rgba(0, 0, 0, 0.1);
-      }
-
-      body.light-mode .text-white {
-        color: #1a0b2e !important;
-      }
-
-      body.light-mode .text-gray-300,
-      body.light-mode .text-gray-400 {
-        color: #6b5b7d !important;
-      }
-
-      body.light-mode .text-purple-300 {
-        color: #a855f7 !important;
-      }
-
-      body.light-mode .mobile-menu {
-        background: rgba(255, 255, 255, 0.98) !important;
-      }
-
-      body.light-mode .project-overlay {
-        background: linear-gradient(
-          180deg,
-          transparent 0%,
-          rgba(255, 255, 255, 0.95) 100%
-        );
-      }
-
-      .gradient-text {
-        background: linear-gradient(90deg, #e879f9 0%, #f97316 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .gradient-btn {
-        background: linear-gradient(90deg, #e879f9 0%, #f97316 100%);
-        transition:
-          transform 0.3s ease,
-          box-shadow 0.3s ease;
-      }
-
-      .gradient-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(232, 121, 249, 0.3);
-      }
-
-      .card {
-        backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
-      }
-
-      .card:hover {
-        border-color: rgba(232, 121, 249, 0.3) !important;
-        transform: translateY(-5px);
-      }
-
-      body.light-mode .card:hover {
-        background: rgba(255, 255, 255, 0.9);
-      }
-
-      body.dark-mode .card:hover {
-        background: rgba(255, 255, 255, 0.05);
-      }
-
-      .nav-link {
-        position: relative;
-        transition: color 0.3s ease;
-      }
-
-      .nav-link::after {
-        content: "";
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: linear-gradient(90deg, #e879f9 0%, #f97316 100%);
-        transition: width 0.3s ease;
-      }
-
-      .nav-link:hover::after {
-        width: 100%;
-      }
-
-      .mobile-menu {
-        position: fixed;
-        right: 0;
-        top: 0;
-        height: 100vh;
-        width: 280px;
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-        z-index: 100;
-      }
-
-      body.dark-mode .mobile-menu {
-        background: rgba(45, 27, 78, 0.98);
-      }
-
-      .mobile-menu.active {
+      .sidebar.mobile-open {
         transform: translateX(0);
+        box-shadow: 8px 0 32px rgba(0,0,0,0.35);
       }
+      .main { height: 100vh; }
+      .mobile-header { display: flex; }
+      .quick-prompts { grid-template-columns: 1fr; max-width: 340px; }
+      .project-cards { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
 
-      .mobile-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-        z-index: 99;
-      }
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
 
-      .mobile-overlay.active {
-        opacity: 1;
-        pointer-events: all;
-      }
+  <div class="sidebar-header">
+    <div class="sidebar-nav-label" style="margin-top:0; padding-left:2px;">Navigation</div>
+  </div>
 
-      .tool-icon {
-        min-width: 72px;
-        height: auto;
-        padding: 10px 14px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        box-sizing: border-box;
-        white-space: nowrap;
-      }
+  <nav class="sidebar-nav">
+    <div class="nav-item" data-prompt="Tell me about yourself, Ankush">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span class="sidebar-label">About Me</span>
+    </div>
+    <div class="nav-item" data-prompt="What are your technical skills?">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span class="sidebar-label">Skills</span>
+    </div>
+    <div class="nav-item" data-prompt="Show me your projects">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <span class="sidebar-label">Projects</span>
+    </div>
+    <div class="nav-item" data-prompt="How can I contact you?">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span class="sidebar-label">Contact</span>
+    </div>
+    <div class="nav-item" data-prompt="Tell me about your education and certifications">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      <span class="sidebar-label">Education</span>
+    </div>
+    <div class="nav-item" data-prompt="What are you currently working on and what are your goals?">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <span class="sidebar-label">Goals</span>
+    </div>
 
-      body.dark-mode .tool-icon {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
+    <a href="/cdn-cgi/l/email-protection#a3e2cdc8d6d0cbd1c2c9929b9b91e3c4cec2cacf8dc0ccce" class="ad-card">
+      <div class="ad-tag">✨ Hire Me</div>
+      <div class="ad-title">Open to Internships</div>
+      <div class="ad-desc">Looking for opportunities in software development. Let's build something great.</div>
+      <div class="ad-cta">Send an email →</div>
+    </a>
+  </nav>
 
-      body.light-mode .tool-icon {
-        background: rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-      }
+  <div class="sidebar-footer">
+    <div class="theme-toggle" id="themeToggle">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIcon">
+        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+      <span class="sidebar-label" id="themeLabel">Light mode</span>
+    </div>
+  </div>
+</aside>
 
-      .tool-icon:hover {
-        background: rgba(232, 121, 249, 0.1);
-        border-color: rgba(232, 121, 249, 0.3);
-        transform: translateY(-3px);
-      }
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-      .project-card {
-        overflow: hidden;
-        transition: all 0.3s ease;
-      }
+<!-- ── MAIN ── -->
+<main class="main" id="main">
 
-      body.dark-mode .project-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
+  <!-- Mobile header: hamburger button then logo — never overlap -->
+  <div class="mobile-header" id="mobileHeader">
+    <button class="hamburger" id="hamburgerBtn" aria-label="Open sidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <div class="mobile-logo" id="mobileLogo">
+      <span class="ml-a">a</span><span class="ml-rest">nkush</span><span class="ml-dot">.</span>
+    </div>
+  </div>
 
-      body.light-mode .project-card {
-        background: rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-      }
-
-      .project-card:hover {
-        border-color: rgba(232, 121, 249, 0.3);
-        transform: translateY(-8px);
-      }
-
-      .project-overlay {
-        background: linear-gradient(
-          180deg,
-          transparent 0%,
-          rgba(10, 1, 24, 0.9) 100%
-        );
-      }
-
-      @media (max-width: 768px) {
-        .hero-title {
-          font-size: 2.5rem;
-        }
-      }
-
-      /* Make tool badges more compact on very small screens */
-      @media (max-width: 420px) {
-        .tool-icon {
-          min-width: 56px;
-          padding: 8px 10px;
-        }
-
-        .tool-icon > span {
-          font-size: 1rem;
-        }
-      }
-
-      /* Theme Toggle Animation */
-      .theme-toggle-icon {
-        transition: transform 0.3s ease;
-      }
-
-      .theme-toggle-icon.rotate {
-        transform: rotate(180deg);
-      }
-    </style>
-  </head>
-  <body class="dark-mode text-white transition-colors duration-300">
-    <!-- Mobile Overlay -->
-    <div id="mobileOverlay" class="mobile-overlay"></div>
-
-    <!-- Navigation -->
-    <nav
-      class="nav-bg fixed w-full top-0 z-50 backdrop-blur-md transition-colors duration-300"
-    >
-      <div class="max-w-7xl mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
-          <div class="text-2xl font-bold">
-            <span class="text-dark">ankush</span
-            ><span class="gradient-text">.</span>
-          </div>
-
-          <!-- Desktop Navigation -->
-          <div class="hidden md:flex items-center space-x-8">
-            <a href="#home" class="nav-link text-dark hover:text-purple-400"
-              >Home</a
-            >
-            <a href="#about" class="nav-link text-dark hover:text-purple-400"
-              >About me</a
-            >
-            <a href="#skills" class="nav-link text-dark hover:text-purple-400"
-              >Skills</a
-            >
-            <a href="#projects" class="nav-link text-dark hover:text-purple-400"
-              >Projects</a
-            >
-            <a href="#contact" class="nav-link text-dark hover:text-purple-400"
-              >Contact me</a
-            >
-          </div>
-
-          <div class="hidden md:flex items-center space-x-4">
-            <button
-              id="themeToggle"
-              type="button"
-              aria-label="Toggle theme"
-              class="p-2 rounded-full hover:bg-opacity-10 hover:bg-purple-400 transition"
-            >
-              <svg
-                id="themeIcon"
-                class="w-5 h-5 theme-toggle-icon text-dark"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                ></path>
-              </svg>
-            </button>
-            <a
-              href="#contact"
-              class="gradient-btn px-6 py-2 rounded-full text-white font-medium flex items-center space-x-2"
-            >
-              <span>Contact</span>
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                ></path>
-              </svg>
-            </a>
-          </div>
-
-          <!-- Mobile Menu Button -->
-          <div class="md:hidden flex items-center space-x-3">
-            <button
-              id="themeToggleMobile"
-              type="button"
-              aria-label="Toggle theme"
-              class="p-2 rounded-full hover:bg-opacity-10 hover:bg-purple-400 transition"
-            >
-              <svg
-                id="themeIconMobile"
-                class="w-5 h-5 theme-toggle-icon text-dark"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                ></path>
-              </svg>
-            </button>
-            <button
-              id="mobileMenuBtn"
-              type="button"
-              aria-label="Open mobile menu"
-              aria-controls="mobileMenu"
-              aria-expanded="false"
-              class="p-2"
-            >
-              <svg
-                class="w-6 h-6 text-dark"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                ></path>
-              </svg>
-            </button>
-          </div>
-        </div>
+  <div class="chat-area" id="chatArea">
+    <!-- Welcome screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+      <div class="welcome-avatar">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+        </svg>
       </div>
-    </nav>
-
-    <!-- Mobile Menu -->
-    <div id="mobileMenu" class="mobile-menu backdrop-blur-lg p-6 shadow-2xl">
-      <div class="flex items-center justify-between mb-8">
-        <div class="text-2xl font-bold">
-          <span class="text-dark">ankush</span
-          ><span class="gradient-text">.</span>
+      <h1 class="welcome-title">Hi, I'm Ankush Raj 👋</h1>
+      <p class="welcome-sub">Aspiring Software Developer based in Patna. Ask me anything about my background, skills, or projects.</p>
+      <div class="quick-prompts">
+        <div class="quick-prompt" data-prompt="Tell me about yourself, Ankush">
+          <span class="prompt-icon">👤</span><strong>About me</strong>Who is Ankush and what does he do?
         </div>
-        <button
-          id="closeMobileMenu"
-          type="button"
-          aria-label="Close mobile menu"
-          class="p-2 hover:bg-opacity-10 hover:bg-purple-400 rounded-full transition"
-        >
-          <svg
-            class="w-6 h-6 text-dark"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </button>
-      </div>
-      <div class="flex flex-col space-y-6">
-        <a
-          href="#home"
-          class="text-dark text-lg mobile-nav-link hover:text-purple-400 transition"
-          >Home</a
-        >
-        <a
-          href="#about"
-          class="text-dark text-lg mobile-nav-link hover:text-purple-400 transition"
-          >About me</a
-        >
-        <a
-          href="#skills"
-          class="text-dark text-lg mobile-nav-link hover:text-purple-400 transition"
-          >Skills</a
-        >
-        <a
-          href="#projects"
-          class="text-dark text-lg mobile-nav-link hover:text-purple-400 transition"
-          >Projects</a
-        >
-        <a
-          href="#contact"
-          class="text-dark text-lg mobile-nav-link hover:text-purple-400 transition"
-          >Contact me</a
-        >
+        <div class="quick-prompt" data-prompt="What are your technical skills?">
+          <span class="prompt-icon">⚡</span><strong>Skills &amp; expertise</strong>C++, Python, IoT, and more
+        </div>
+        <div class="quick-prompt" data-prompt="Show me your projects">
+          <span class="prompt-icon">🚀</span><strong>Projects</strong>What has Ankush built?
+        </div>
+        <div class="quick-prompt" data-prompt="How can I contact you?">
+          <span class="prompt-icon">✉️</span><strong>Contact</strong>Get in touch or hire me
+        </div>
       </div>
     </div>
 
-    <!-- Hero Section -->
-    <section
-      id="home"
-      class="min-h-screen flex items-center justify-center px-6 pt-20"
-    >
-      <div class="max-w-4xl mx-auto text-center">
-        <div class="mb-8">
-          <img
-            src="./ankush.png"
-            alt="Ankush Raj"
-            class="w-32 h-32 md:w-40 md:h-40 rounded-full mx-auto border-4 border-purple-400 shadow-2xl"
-          />
-        </div>
-        <p class="text-purple-400 mb-4 text-lg">Hi! I'm Ankush Raj</p>
-        <h1
-          class="hero-title text-5xl md:text-7xl font-bold mb-6 leading-tight text-dark"
-        >
-          Aspiring Software Developer<br />
-          <span class="gradient-text">based in Patna.</span>
-        </h1>
-        <p class="text-gray-400 text-lg md:text-xl mb-8 max-w-3xl mx-auto">
-          Motivated B.E. Information Technology student with hands-on experience
-          in Python, C++, and IoT-based projects. Passionate about building
-          practical solutions and actively seeking internship opportunities.
-        </p>
-        <div
-          class="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <a
-            href="#contact"
-            class="gradient-btn px-8 py-3 rounded-full text-white font-medium flex items-center space-x-2"
-          >
-            <span>Contact me</span>
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M14 5l7 7m0 0l-7 7m7-7H3"
-              ></path>
-            </svg>
-          </a>
-          <a
-            href="mailto:Ankushraj1882@gmail.com"
-            class="card px-8 py-3 rounded-full text-dark font-medium flex items-center space-x-2 hover:bg-opacity-20 transition"
-          >
-            <span>My Resume</span>
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
-              ></path>
-            </svg>
-          </a>
-        </div>
+    <div class="messages-container" id="messagesContainer" style="display:none;"></div>
+  </div>
+
+  <!-- Input — no hint text -->
+  <div class="input-area">
+    <div class="input-wrapper">
+      <div class="tag-row">
+        <button class="tag-btn" data-prompt="Tell me about yourself, Ankush">👤 About</button>
+        <button class="tag-btn" data-prompt="What are your technical skills?">⚡ Skills</button>
+        <button class="tag-btn" data-prompt="Show me your projects">🚀 Projects</button>
+        <button class="tag-btn" data-prompt="Tell me about your education and certifications">🎓 Education</button>
+        <button class="tag-btn" data-prompt="How can I contact you?">✉️ Contact</button>
       </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-20 px-6">
-      <div class="max-w-6xl mx-auto">
-        <p class="text-purple-400 text-center mb-4">Introduction</p>
-        <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-dark">
-          About me
-        </h2>
-
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-          <div class="flex justify-center">
-            <div class="relative">
-              <img
-                src="./ankush.png"
-                alt="Ankush Raj"
-                class="rounded-3xl w-full max-w-md shadow-2xl"
-              />
-              <div
-                class="absolute -bottom-6 -right-6 bg-white rounded-full p-6 shadow-2xl"
-              >
-                <div class="text-center">
-                  <p class="text-purple-900 font-bold text-xs">FRONT-END</p>
-                  <p class="text-purple-900 font-bold text-xs">DEVELOPER</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <p class="text-gray-400 text-lg mb-8 leading-relaxed">
-              I am a B.E. Information Technology student from Chandigarh
-              University with a strong foundation in programming, databases, and
-              problem-solving. Throughout my journey, I have gained hands-on
-              experience through IoT-based projects and various programming
-              languages.
-            </p>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div class="card rounded-2xl p-6">
-                <div class="text-purple-400 mb-3">
-                  <svg
-                    class="w-8 h-8"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-                    ></path>
-                  </svg>
-                </div>
-                <h3 class="font-bold text-lg mb-2 text-dark">Languages</h3>
-                <p class="text-gray-400 text-sm">
-                  C, C++, Python, PHP, HTML, CSS
-                </p>
-              </div>
-
-              <div class="card rounded-2xl p-6">
-                <div class="text-purple-400 mb-3">
-                  <svg
-                    class="w-8 h-8"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 14l9-5-9-5-9 5 9 5z"
-                    ></path>
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
-                    ></path>
-                  </svg>
-                </div>
-                <h3 class="font-bold text-lg mb-2 text-dark">Education</h3>
-                <p class="text-gray-400 text-sm">
-                  B.E in Information Technology
-                </p>
-              </div>
-
-              <div class="card rounded-2xl p-6">
-                <div class="text-purple-400 mb-3">
-                  <svg
-                    class="w-8 h-8"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    ></path>
-                  </svg>
-                </div>
-                <h3 class="font-bold text-lg mb-2 text-dark">Experience</h3>
-                <p class="text-gray-400 text-sm">
-                  Business Developer at Hostsac
-                </p>
-              </div>
-
-              <div class="card rounded-2xl p-6">
-                <div class="text-purple-400 mb-3">
-                  <svg
-                    class="w-8 h-8"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    ></path>
-                  </svg>
-                </div>
-                <h3 class="font-bold text-lg mb-2 text-dark">Certifications</h3>
-                <p class="text-gray-400 text-sm">
-                  IoT Devices, Python with IoT
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="input-box">
+        <textarea class="chat-input" id="chatInput" placeholder="Ask me anything..." rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" aria-label="Send">
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
       </div>
-    </section>
+    </div>
+  </div>
+</main>
 
-    <!-- Skills Section -->
-    <section id="skills" class="py-20 px-6">
-      <div class="max-w-6xl mx-auto">
-        <p class="text-purple-400 text-center mb-4">What I offer</p>
-        <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-dark">
-          Technical Skills
-        </h2>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ── PERSON SVG for user avatar ──
+  const personSVG = `<svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;display:block;"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>`;
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-16">
-          <div class="tool-icon rounded-2xl flex items-center justify-center">
-            <span class="text-2xl font-bold text-purple-400">C</span>
+  // ── RESPONSES ──
+  const responses = {
+    about: {
+      keywords: ['about','yourself','who','background','tell me','introduction'],
+      render: () => `<h3>Hi! I'm Ankush Raj 👋</h3>
+        <p>I'm an <strong>aspiring Software Developer</strong> and B.E. Information Technology student at <strong>Chandigarh University</strong>, based in Patna, Bihar.</p>
+        <p>Motivated by building practical, real-world solutions — I have hands-on experience in Python, C++, IoT-based projects, and database management, and I'm actively seeking <strong>internship opportunities</strong>.</p>
+        <div class="info-card">
+          <div class="info-row"><span class="info-label">Role</span><span class="info-val">Front-end Developer &amp; Software Developer</span></div>
+          <div class="info-row"><span class="info-label">University</span><span class="info-val">Chandigarh University — B.E. IT</span></div>
+          <div class="info-row"><span class="info-label">Location</span><span class="info-val">📍 Patna, Bihar, India</span></div>
+          <div class="info-row"><span class="info-label">Experience</span><span class="info-val">Business Developer at Hostsac</span></div>
+          <div class="info-row"><span class="info-label">Status</span><span class="info-val">🟢 Open to internships</span></div>
+        </div>
+        <p>Passionate about turning ideas into working products. What would you like to know more about?</p>`
+    },
+    skills: {
+      keywords: ['skill','technical','know','language','stack','expertise','proficient'],
+      render: () => `<h3>Technical Skills ⚡</h3>
+        <p>Here's my full technical toolkit:</p>
+        <div class="skill-grid">
+          <div class="skill-chip"><span class="dot"></span>C</div>
+          <div class="skill-chip"><span class="dot"></span>C++</div>
+          <div class="skill-chip"><span class="dot"></span>Python</div>
+          <div class="skill-chip"><span class="dot"></span>PHP</div>
+          <div class="skill-chip"><span class="dot"></span>HTML &amp; CSS</div>
+          <div class="skill-chip"><span class="dot"></span>MySQL / SQL</div>
+          <div class="skill-chip"><span class="dot"></span>IoT Development</div>
+          <div class="skill-chip"><span class="dot"></span>Database Management</div>
+        </div>
+        <div class="info-card">
+          <div class="info-row"><span class="info-label">Programming</span><span class="info-val">Strong in C, C++, Python for algorithms and practical solutions</span></div>
+          <div class="info-row"><span class="info-label">IoT</span><span class="info-val">Certified in IoT Devices and Python with IoT</span></div>
+          <div class="info-row"><span class="info-label">Database</span><span class="info-val">Proficient in MySQL for relational database design</span></div>
+          <div class="info-row"><span class="info-label">Web</span><span class="info-val">PHP, HTML, CSS for full-stack web development</span></div>
+        </div>
+        <p>Continuously learning — currently deepening knowledge in AI/ML and modern web frameworks.</p>`
+    },
+    projects: {
+      keywords: ['project','built','work','portfolio','made','created','show'],
+      render: () => `<h3>Featured Projects 🚀</h3>
+        <p>Here's a selection of what I've built:</p>
+        <div class="project-cards">
+          <div class="project-card">
+            <div class="project-tag">Python · AI</div>
+            <div class="project-name">🎙️ Voice Assistant</div>
+            <div class="project-desc">Python-based voice assistant automating daily tasks using natural language processing.</div>
           </div>
-          <div class="tool-icon rounded-2xl flex items-center justify-center">
-            <span class="text-2xl font-bold text-purple-400">C++</span>
+          <div class="project-card">
+            <div class="project-tag">MySQL · PHP</div>
+            <div class="project-name">📦 Inventory Management</div>
+            <div class="project-desc">Comprehensive system for tracking inventory with real-time updates and MySQL backend.</div>
           </div>
-          <div class="tool-icon rounded-2xl flex items-center justify-center">
-            <span class="text-2xl font-bold text-purple-400">PY</span>
+          <div class="project-card">
+            <div class="project-tag">IoT · Hardware</div>
+            <div class="project-name">🔌 IoT System</div>
+            <div class="project-desc">Connected device solutions integrating sensors and microcontrollers with software.</div>
           </div>
-          <div class="tool-icon rounded-2xl flex items-center justify-center">
-            <span class="text-2xl font-bold text-purple-400">PHP</span>
-          </div>
-          <div class="tool-icon rounded-2xl flex items-center justify-center">
-            <span class="text-2xl font-bold text-purple-400">SQL</span>
-          </div>
-          <div class="tool-icon rounded-2xl flex items-center justify-center">
-            <span class="text-2xl font-bold text-purple-400">IoT</span>
+          <div class="project-card">
+            <div class="project-tag">C++ · Algorithms</div>
+            <div class="project-name">🧮 Algorithms Lab</div>
+            <div class="project-desc">C++ implementations of sorting, searching, and optimization algorithms.</div>
           </div>
         </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div class="card rounded-3xl p-8">
-            <div
-              class="w-16 h-16 gradient-btn rounded-2xl flex items-center justify-center mb-6"
-            >
-              <svg
-                class="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-                ></path>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-bold mb-3 text-dark">Programming</h3>
-            <p class="text-gray-400 mb-4">
-              Strong foundation in C, C++, and Python for developing efficient
-              solutions and algorithms.
-            </p>
-            <a
-              href="#"
-              class="text-purple-400 flex items-center space-x-2 hover:space-x-3 transition-all"
-            >
-              <span>Learn more</span>
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                ></path>
-              </svg>
-            </a>
-          </div>
-
-          <div class="card rounded-3xl p-8">
-            <div
-              class="w-16 h-16 gradient-btn rounded-2xl flex items-center justify-center mb-6"
-            >
-              <svg
-                class="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
-                ></path>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-bold mb-3 text-dark">IoT Development</h3>
-            <p class="text-gray-400 mb-4">
-              Experience in building IoT-based projects and understanding of
-              connected device ecosystems.
-            </p>
-            <a
-              href="#"
-              class="text-purple-400 flex items-center space-x-2 hover:space-x-3 transition-all"
-            >
-              <span>Learn more</span>
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                ></path>
-              </svg>
-            </a>
-          </div>
-
-          <div class="card rounded-3xl p-8">
-            <div
-              class="w-16 h-16 gradient-btn rounded-2xl flex items-center justify-center mb-6"
-            >
-              <svg
-                class="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
-                ></path>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-bold mb-3 text-dark">
-              Database Management
-            </h3>
-            <p class="text-gray-400 mb-4">
-              Proficient in MySQL for designing and managing relational database
-              systems.
-            </p>
-            <a
-              href="#"
-              class="text-purple-400 flex items-center space-x-2 hover:space-x-3 transition-all"
-            >
-              <span>Learn more</span>
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                ></path>
-              </svg>
-            </a>
-          </div>
+        <p>Always building something new! Want more detail on any project? Just ask.</p>`
+    },
+    education: {
+      keywords: ['education','study','university','degree','certif','qualification','course','college'],
+      render: () => `<h3>Education &amp; Certifications 🎓</h3>
+        <div class="info-card">
+          <div class="info-row"><span class="info-label">Degree</span><span class="info-val">B.E. in Information Technology</span></div>
+          <div class="info-row"><span class="info-label">University</span><span class="info-val">Chandigarh University</span></div>
+          <div class="info-row"><span class="info-label">Status</span><span class="info-val">Currently enrolled</span></div>
         </div>
-      </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" class="py-20 px-6">
-      <div class="max-w-6xl mx-auto">
-        <p class="text-purple-400 text-center mb-4">My portfolio</p>
-        <h2 class="text-4xl md:text-5xl font-bold text-center mb-6 text-dark">
-          Featured Projects
-        </h2>
-        <p class="text-gray-400 text-center max-w-3xl mx-auto mb-12">
-          Welcome to my project portfolio! Explore a collection of projects
-          showcasing my expertise in software development and problem-solving.
-        </p>
-
-        <div class="grid md:grid-cols-2 gap-8 mb-8">
-          <div class="project-card rounded-3xl overflow-hidden group">
-            <div
-              class="relative h-64 bg-gradient-to-br from-purple-600 to-purple-900"
-            >
-              <div class="absolute inset-0 flex items-center justify-center">
-                <svg
-                  class="w-20 h-20 text-white opacity-50"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                  ></path>
-                </svg>
-              </div>
-              <div class="project-overlay absolute inset-0"></div>
-            </div>
-            <div class="p-6 card">
-              <h3 class="text-2xl font-bold mb-2 text-dark">Voice Assistant</h3>
-              <p class="text-gray-400 mb-4">
-                Python-based voice assistant for automating daily tasks with
-                natural language processing.
-              </p>
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-purple-400">Python • AI</span>
-                <button
-                  class="w-10 h-10 rounded-full card flex items-center justify-center hover:bg-opacity-20 transition"
-                >
-                  <svg
-                    class="w-5 h-5 text-dark"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    ></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="project-card rounded-3xl overflow-hidden group">
-            <div
-              class="relative h-64 bg-gradient-to-br from-orange-600 to-pink-900"
-            >
-              <div class="absolute inset-0 flex items-center justify-center">
-                <svg
-                  class="w-20 h-20 text-white opacity-50"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                  ></path>
-                </svg>
-              </div>
-              <div class="project-overlay absolute inset-0"></div>
-            </div>
-            <div class="p-6 card">
-              <h3 class="text-2xl font-bold mb-2 text-dark">
-                Inventory Management System
-              </h3>
-              <p class="text-gray-400 mb-4">
-                Comprehensive system for tracking and managing inventory with
-                real-time updates.
-              </p>
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-purple-400">MySQL • PHP</span>
-                <button
-                  class="w-10 h-10 rounded-full card flex items-center justify-center hover:bg-opacity-20 transition"
-                >
-                  <svg
-                    class="w-5 h-5 text-dark"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    ></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
+        <h3>Certifications</h3>
+        <div class="skill-grid">
+          <div class="skill-chip"><span class="dot"></span>IoT Devices</div>
+          <div class="skill-chip"><span class="dot"></span>Python with IoT</div>
         </div>
-
-        <div class="text-center">
-          <button
-            class="card px-8 py-3 rounded-full text-dark font-medium hover:bg-opacity-10 transition flex items-center space-x-2 mx-auto"
-          >
-            <span>Show more</span>
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M14 5l7 7m0 0l-7 7m7-7H3"
-              ></path>
-            </svg>
-          </button>
+        <p>Strong foundation in programming, databases, computer networks, and systems design. Also gained real-world business experience as <strong>Business Developer at Hostsac</strong>.</p>`
+    },
+    contact: {
+      keywords: ['contact','email','phone','hire','reach','connect','touch','message'],
+      render: () => `<h3>Let's Connect ✉️</h3>
+        <p>Seeking <strong>internship opportunities</strong> and open to collaborations. I'd love to hear from you!</p>
+        <div class="contact-grid">
+          <a href="mailto:Ankushraj1882@gmail.com" class="contact-item"><div class="c-icon">📧</div><div class="c-label">Email</div><div class="c-val">Ankushraj1882@gmail.com</div></a>
+          <a href="tel:+917461952180" class="contact-item"><div class="c-icon">📱</div><div class="c-label">Phone</div><div class="c-val">+91 7461952180</div></a>
+          <div class="contact-item"><div class="c-icon">📍</div><div class="c-label">Location</div><div class="c-val">Patna, Bihar, India</div></div>
         </div>
-      </div>
-    </section>
+        <p>Whether you're a recruiter, developer, or have a project idea — don't hesitate to reach out!</p>`
+    },
+    goals: {
+      keywords: ['goal','future','working on','plan','ambition','aspire','dream','currently'],
+      render: () => `<h3>What I'm Working Towards 🌟</h3>
+        <p>As a <strong>B.E. IT student</strong>, I'm focused on bridging academic knowledge with real-world impact:</p>
+        <ul>
+          <li>Landing a strong software engineering internship</li>
+          <li>Deepening AI/ML integration knowledge in practical apps</li>
+          <li>Building more full-stack projects that solve real problems</li>
+          <li>Expanding IoT expertise into smart systems and edge computing</li>
+          <li>Contributing to open-source projects</li>
+        </ul>
+        <p>Every project is a chance to push my skills further. Working on something interesting? Let's connect!</p>`
+    }
+  };
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-20 px-6">
-      <div class="max-w-4xl mx-auto text-center">
-        <p class="text-purple-400 mb-4">Get in touch</p>
-        <h2 class="text-4xl md:text-5xl font-bold mb-6 text-dark">
-          Contact Me
-        </h2>
-        <p class="text-gray-400 mb-12 max-w-2xl mx-auto">
-          I'm currently seeking internship opportunities and open to
-          collaborations. Let's connect and build something amazing together!
-        </p>
+  function matchResponse(text) {
+    const lower = text.toLowerCase();
+    for (const v of Object.values(responses)) {
+      if (v.keywords.some(kw => lower.includes(kw))) return v;
+    }
+    return null;
+  }
+  function fallback(text) {
+    return `<p>Great question! I might not have a direct answer for "<strong>${text.replace(/[<>]/g,'')}</strong>" right now.</p><p>Try asking about my <strong>skills</strong>, <strong>projects</strong>, <strong>education</strong>, or how to <strong>contact me</strong>!</p>`;
+  }
 
-        <div class="grid md:grid-cols-3 gap-8 mb-12">
-          <div class="card rounded-2xl p-6">
-            <div
-              class="w-12 h-12 gradient-btn rounded-xl flex items-center justify-center mx-auto mb-4"
-            >
-              <svg
-                class="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                ></path>
-              </svg>
-            </div>
-            <h3 class="font-bold mb-2 text-dark">Email</h3>
-            <a
-              href="mailto:Ankushraj1882@gmail.com"
-              class="text-purple-400 hover:text-purple-300 text-sm break-all"
-              >Ankushraj1882@gmail.com</a
-            >
-          </div>
+  // ── STATE ──
+  let chatStarted = false;
+  const chatArea  = document.getElementById('chatArea');
+  const mc        = document.getElementById('messagesContainer');
+  const ws        = document.getElementById('welcomeScreen');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn   = document.getElementById('sendBtn');
 
-          <div class="card rounded-2xl p-6">
-            <div
-              class="w-12 h-12 gradient-btn rounded-xl flex items-center justify-center mx-auto mb-4"
-            >
-              <svg
-                class="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                ></path>
-              </svg>
-            </div>
-            <h3 class="font-bold mb-2 text-dark">Phone</h3>
-            <a
-              href="tel:+917461952180"
-              class="text-purple-400 hover:text-purple-300"
-              >+91 7461952180</a
-            >
-          </div>
+  function resetToHome() {
+    chatStarted = false;
+    mc.innerHTML = ''; mc.style.display = 'none';
+    ws.style.display = '';
+    ws.style.animation = 'none'; void ws.offsetWidth; ws.style.animation = '';
+    chatInput.value = ''; chatInput.style.height = 'auto';
+  }
+  document.getElementById('mobileLogo').addEventListener('click', resetToHome);
 
-          <div class="card rounded-2xl p-6">
-            <div
-              class="w-12 h-12 gradient-btn rounded-xl flex items-center justify-center mx-auto mb-4"
-            >
-              <svg
-                class="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                ></path>
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                ></path>
-              </svg>
-            </div>
-            <h3 class="font-bold mb-2 text-dark">Location</h3>
-            <p class="text-purple-400">Patna, Bihar</p>
-          </div>
-        </div>
+  function startChat() {
+    if (!chatStarted) {
+      chatStarted = true;
+      ws.style.display = 'none';
+      mc.style.display = 'flex';
+      mc.style.flexDirection = 'column';
+    }
+  }
 
-        <div class="flex justify-center space-x-6">
-          <a
-            href="https://linkedin.com/in/ankushraj-vk18"
-            target="_blank"
-            class="w-12 h-12 rounded-full card flex items-center justify-center hover:bg-opacity-20 transition"
-          >
-            <svg
-              class="w-5 h-5 text-dark"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
-              />
-            </svg>
-          </a>
-          <a
-            href="mailto:Ankushraj1882@gmail.com"
-            class="w-12 h-12 rounded-full card flex items-center justify-center hover:bg-opacity-20 transition"
-          >
-            <svg
-              class="w-5 h-5 text-dark"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              ></path>
-            </svg>
-          </a>
-        </div>
-      </div>
-    </section>
+  // Apply staggered animation-delay to each direct child of msg-body
+  function staggerChildren(body) {
+    Array.from(body.children).forEach((el, i) => {
+      el.style.animationDelay = (i * 95) + 'ms';
+    });
+  }
 
-    <!-- Footer -->
-    <footer class="border-t card py-8 px-6">
-      <div class="max-w-6xl mx-auto">
-        <div class="flex flex-col md:flex-row items-center justify-between">
-          <div class="text-2xl font-bold mb-4 md:mb-0">
-            <span class="text-dark">ankush</span
-            ><span class="gradient-text">.</span>
-          </div>
-          <div class="text-gray-400 text-center md:text-right">
-            <p>&copy; 2026 Ankush Raj. All rights reserved.</p>
-            <p class="text-sm mt-1">Built with passion and dedication</p>
-          </div>
-        </div>
-      </div>
-    </footer>
+  function appendMessage(role, content, isHTML = false) {
+    startChat();
+    const msg = document.createElement('div');
+    msg.className = `message ${role === 'user' ? 'user-message' : 'assistant-message'}`;
 
-    <script>
-      // Defensive, accessible script: theme, smooth scroll and mobile menu
-      (function () {
-        const body = document.body;
-        const themeToggle = document.getElementById("themeToggle");
-        const themeToggleMobile = document.getElementById("themeToggleMobile");
-        const themeIcon = document.getElementById("themeIcon");
-        const themeIconMobile = document.getElementById("themeIconMobile");
+    const avatar = document.createElement('div');
+    avatar.className = `msg-avatar ${role === 'user' ? 'user' : 'assistant'}`;
 
-        // Check for saved theme preference or default to dark mode
-        try {
-          const currentTheme = localStorage.getItem("theme") || "dark";
-          if (currentTheme) body.classList.add(currentTheme + "-mode");
-        } catch (e) {
-          console.warn("Could not read theme from localStorage", e);
-          body.classList.add("dark-mode");
-        }
+    if (role === 'user') {
+      avatar.innerHTML = personSVG;
+    } else {
+      avatar.textContent = 'A';
+      requestAnimationFrame(() => {
+        avatar.classList.add('ring-anim');
+        avatar.addEventListener('animationend', () => avatar.classList.remove('ring-anim'), { once: true });
+      });
+    }
 
-        function updateThemeIcons(theme) {
-          const sunIcon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>`;
-          const moonIcon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>`;
-          try {
-            if (themeIcon)
-              themeIcon.innerHTML = theme === "light" ? moonIcon : sunIcon;
-            if (themeIconMobile)
-              themeIconMobile.innerHTML =
-                theme === "light" ? moonIcon : sunIcon;
-          } catch (e) {
-            // ignore svg innerHTML failures
-          }
-        }
+    const cd = document.createElement('div');
+    cd.className = 'msg-content';
 
-        function setTheme(theme) {
-          if (!theme) return;
-          body.classList.remove("dark-mode", "light-mode");
-          body.classList.add(theme + "-mode");
-          try {
-            localStorage.setItem("theme", theme);
-          } catch (e) {}
-          updateThemeIcons(theme);
-        }
+    if (role !== 'user') {
+      const sender = document.createElement('div');
+      sender.className = 'msg-sender';
+      sender.textContent = 'Ankush';
+      cd.appendChild(sender);
+    }
 
-        function toggleTheme() {
-          if (body.classList.contains("dark-mode")) setTheme("light");
-          else setTheme("dark");
-        }
+    const body = document.createElement('div');
+    body.className = 'msg-body';
+    if (isHTML) {
+      body.innerHTML = content;
+      staggerChildren(body);
+    } else {
+      body.textContent = content;
+    }
+    cd.appendChild(body);
 
-        // Attach theme handlers if present
-        if (themeToggle) themeToggle.addEventListener("click", toggleTheme);
-        if (themeToggleMobile)
-          themeToggleMobile.addEventListener("click", toggleTheme);
+    msg.appendChild(avatar);
+    msg.appendChild(cd);
+    mc.appendChild(msg);
 
-        // Update icons initial state
-        try {
-          updateThemeIcons(
-            localStorage.getItem("theme") ||
-              (body.classList.contains("light-mode") ? "light" : "dark"),
-          );
-        } catch (e) {}
+    const hr = document.createElement('hr');
+    hr.className = 'msg-divider';
+    mc.appendChild(hr);
 
-        // Initialize Lenis smooth scrolling (guarded)
-        let lenis = null;
-        try {
-          if (typeof Lenis !== "undefined") {
-            lenis = new Lenis({
-              duration: 1.2,
-              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-              orientation: "vertical",
-              smoothWheel: true,
-              wheelMultiplier: 1,
-              touchMultiplier: 2,
-            });
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
 
-            function raf(time) {
-              if (lenis && typeof lenis.raf === "function") lenis.raf(time);
-              requestAnimationFrame(raf);
-            }
-            requestAnimationFrame(raf);
-          }
-        } catch (e) {
-          console.warn("Lenis init failed:", e);
-          lenis = null;
-        }
+  function showTyping() {
+    startChat();
+    const row = document.createElement('div');
+    row.className = 'typing-row'; row.id = 'typingRow';
+    row.innerHTML = `<div class="ring-loader"></div><span class="typing-text">Ankush is thinking…</span>`;
+    mc.appendChild(row);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
 
-        // Mobile menu functionality (robust)
-        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-        const mobileMenu = document.getElementById("mobileMenu");
-        const mobileOverlay = document.getElementById("mobileOverlay");
-        const closeMobileMenu = document.getElementById("closeMobileMenu");
-        const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
+  function removeTyping() {
+    const t = document.getElementById('typingRow'); if (t) t.remove();
+  }
 
-        function openMobileMenu() {
-          if (!mobileMenu || !mobileOverlay) return;
-          mobileMenu.classList.add("active");
-          mobileMenu.setAttribute("aria-hidden", "false");
-          mobileOverlay.classList.add("active");
-          document.body.style.overflow = "hidden";
-          if (mobileMenuBtn)
-            mobileMenuBtn.setAttribute("aria-expanded", "true");
-        }
+  async function sendMessage(text) {
+    if (!text.trim() || sendBtn.disabled) return;
+    chatInput.value = ''; chatInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    appendMessage('user', text);
+    showTyping();
+    await new Promise(r => setTimeout(r, 850 + Math.random() * 500));
+    removeTyping();
+    const match = matchResponse(text);
+    appendMessage('assistant', match ? match.render() : fallback(text), true);
+    sendBtn.disabled = false;
+    chatInput.focus();
+  }
 
-        function closeMobileMenuFunc() {
-          if (!mobileMenu || !mobileOverlay) return;
-          mobileMenu.classList.remove("active");
-          mobileMenu.setAttribute("aria-hidden", "true");
-          mobileOverlay.classList.remove("active");
-          document.body.style.overflow = "";
-          if (mobileMenuBtn)
-            mobileMenuBtn.setAttribute("aria-expanded", "false");
-        }
+  sendBtn.addEventListener('click', () => sendMessage(chatInput.value));
+  chatInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(chatInput.value); }
+  });
+  chatInput.addEventListener('input', () => {
+    chatInput.style.height = 'auto';
+    chatInput.style.height = Math.min(chatInput.scrollHeight, 140) + 'px';
+  });
+  document.querySelectorAll('.tag-btn, .quick-prompt, .nav-item[data-prompt]').forEach(el => {
+    el.addEventListener('click', () => { const p = el.dataset.prompt; if (p) sendMessage(p); });
+  });
 
-        if (mobileMenuBtn) {
-          mobileMenuBtn.addEventListener("click", function () {
-            if (!mobileMenu) return;
-            if (mobileMenu.classList.contains("active")) closeMobileMenuFunc();
-            else openMobileMenu();
-          });
-        }
+  // ── THEME ──
+  let isDark = true;
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    isDark = !isDark;
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    document.getElementById('themeLabel').textContent = isDark ? 'Light mode' : 'Dark mode';
+    document.getElementById('themeIcon').innerHTML = isDark
+      ? '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>'
+      : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  });
 
-        if (closeMobileMenu)
-          closeMobileMenu.addEventListener("click", closeMobileMenuFunc);
-        if (mobileOverlay)
-          mobileOverlay.addEventListener("click", closeMobileMenuFunc);
+  // ── MOBILE SIDEBAR ──
+  // On mobile, hamburger opens; clicking the overlay (outside area) closes.
+  const sb      = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
 
-        if (mobileNavLinks && mobileNavLinks.length) {
-          mobileNavLinks.forEach((link) =>
-            link.addEventListener("click", closeMobileMenuFunc),
-          );
-        }
+  function openSidebar() {
+    sb.classList.add('mobile-open');
+    overlay.classList.add('active');
+  }
+  function closeSidebar() {
+    sb.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+  }
 
-        // Smooth scroll for anchor links (works with or without Lenis)
-        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-          anchor.addEventListener("click", function (e) {
-            const href = this.getAttribute("href");
-            const target = document.querySelector(href);
-            if (!target) return; // let default if no target
-            e.preventDefault();
-            // if lenis available use it, otherwise fallback to native smooth
-            if (lenis && typeof lenis.scrollTo === "function") {
-              lenis.scrollTo(target, { offset: -80, duration: 1.2 });
-            } else {
-              window.scrollTo({
-                top: target.getBoundingClientRect().top + window.scrollY - 80,
-                behavior: "smooth",
-              });
-            }
-          });
-        });
+  document.getElementById('hamburgerBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    sb.classList.contains('mobile-open') ? closeSidebar() : openSidebar();
+  });
 
-        // Intersection Observer for animations
-        try {
-          const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -100px 0px",
-          };
-          const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.style.opacity = "1";
-                entry.target.style.transform = "translateY(0)";
-              }
-            });
-          }, observerOptions);
+  // Tapping overlay (area outside sidebar) closes it
+  overlay.addEventListener('click', closeSidebar);
 
-          document.querySelectorAll(".card, .project-card").forEach((el) => {
-            el.style.opacity = "0";
-            el.style.transform = "translateY(20px)";
-            el.style.transition = "all 0.6s ease-out";
-            observer.observe(el);
-          });
-        } catch (e) {
-          console.warn("Observer init failed", e);
-        }
-      })();
-    </script>
-  </body>
+  // Also close when a nav item is tapped on mobile
+  document.querySelectorAll('.nav-item[data-prompt]').forEach(el => {
+    el.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+</script>
+</body>
 </html>
